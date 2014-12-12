@@ -25,22 +25,18 @@
 package com.telefonica.euro_iaas.paasmanager.manager;
 
 import static org.junit.Assert.assertEquals;
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
 
 import com.telefonica.euro_iaas.commons.dao.AlreadyExistsEntityException;
 import com.telefonica.euro_iaas.commons.dao.EntityNotFoundException;
@@ -62,12 +58,12 @@ import com.telefonica.euro_iaas.paasmanager.manager.async.impl.TierInstanceAsync
 import com.telefonica.euro_iaas.paasmanager.model.ClaudiaData;
 import com.telefonica.euro_iaas.paasmanager.model.Environment;
 import com.telefonica.euro_iaas.paasmanager.model.EnvironmentInstance;
+import com.telefonica.euro_iaas.paasmanager.model.InstallableInstance.Status;
 import com.telefonica.euro_iaas.paasmanager.model.ProductInstance;
 import com.telefonica.euro_iaas.paasmanager.model.ProductRelease;
 import com.telefonica.euro_iaas.paasmanager.model.Task;
 import com.telefonica.euro_iaas.paasmanager.model.Tier;
 import com.telefonica.euro_iaas.paasmanager.model.TierInstance;
-import com.telefonica.euro_iaas.paasmanager.model.InstallableInstance.Status;
 import com.telefonica.euro_iaas.paasmanager.model.dto.VM;
 import com.telefonica.euro_iaas.paasmanager.model.searchcriteria.ProductInstanceSearchCriteria;
 import com.telefonica.euro_iaas.paasmanager.util.SystemPropertiesProvider;
@@ -95,6 +91,7 @@ public class AsynManagerImplTest {
 
     /**
      * Initialization of the class.
+     * 
      * @throws Exception
      */
     @Before
@@ -136,7 +133,6 @@ public class AsynManagerImplTest {
         tierProductShard.setName("tiershard");
         tierProductShard.setProductReleases(productReleasesShards);
 
-
         Environment envResult = new Environment();
         envResult.setName("environemntName");
         envResult.addTier(tierProductShard);
@@ -159,11 +155,11 @@ public class AsynManagerImplTest {
         when(taskDao.create(any(Task.class))).thenReturn(task);
         when(taskDao.update(any(Task.class))).thenReturn(task);
 
-
     }
 
     /**
      * Test the creation of ha task manager implementation.
+     * 
      * @throws AlreadyExistsEntityException
      */
     @Test
@@ -177,6 +173,7 @@ public class AsynManagerImplTest {
 
     /**
      * Update a Task Manager Impl.
+     * 
      * @throws AlreadyExistsEntityException
      */
     @Test
@@ -191,6 +188,7 @@ public class AsynManagerImplTest {
 
     /**
      * Test the loading of a task manager implementation.
+     * 
      * @throws AlreadyExistsEntityException
      * @throws EntityNotFoundException
      */
@@ -205,6 +203,7 @@ public class AsynManagerImplTest {
 
     /**
      * Test the creation of a tier instance manager.
+     * 
      * @throws AlreadyExistsEntityException
      * @throws InvalidEntityException
      * @throws InfrastructureException
@@ -222,11 +221,10 @@ public class AsynManagerImplTest {
         String callback = "";
         Task task = new Task();
 
-        Mockito
-                .doNothing()
+        Mockito.doNothing()
                 .when(tierInstanceManager)
                 .create(any(ClaudiaData.class), any(TierInstance.class), any(EnvironmentInstance.class),
-                any(SystemPropertiesProvider.class));
+                        any(SystemPropertiesProvider.class));
 
         tierInstanceAsyncManagerImpl.create(claudiaData, tierInstanceShard, environmentInstance, task, callback);
 
@@ -241,9 +239,7 @@ public class AsynManagerImplTest {
         String callback = "";
         Task task = new Task();
 
-        Mockito
-                .doNothing()
-                .when(tierInstanceManager)
+        Mockito.doNothing().when(tierInstanceManager)
                 .update(any(ClaudiaData.class), any(TierInstance.class), any(EnvironmentInstance.class));
 
         tierInstanceAsyncManagerImpl.update(claudiaData, tierInstanceShard, environmentInstance, task, callback);
@@ -259,11 +255,10 @@ public class AsynManagerImplTest {
         String callback = "";
         Task task = new Task();
 
-        Mockito
-                .doThrow(new InfrastructureException("test"))
+        Mockito.doThrow(new InfrastructureException("test"))
                 .when(tierInstanceManager)
                 .create(any(ClaudiaData.class), any(TierInstance.class), any(EnvironmentInstance.class),
-                any(SystemPropertiesProvider.class));
+                        any(SystemPropertiesProvider.class));
 
         tierInstanceAsyncManagerImpl.create(claudiaData, tierInstanceShard, environmentInstance, task, callback);
 
@@ -277,9 +272,7 @@ public class AsynManagerImplTest {
         String callback = "";
         Task task = new Task();
 
-        Mockito
-                .doNothing()
-                .when(tierInstanceManager)
+        Mockito.doNothing().when(tierInstanceManager)
                 .delete(any(ClaudiaData.class), any(TierInstance.class), any(EnvironmentInstance.class));
 
         tierInstanceAsyncManagerImpl.delete(claudiaData, tierInstanceShard, environmentInstance, task, callback);
@@ -295,15 +288,14 @@ public class AsynManagerImplTest {
         String callback = "";
         Task task = new Task();
 
-        when(productInstanceManager.install(any(TierInstance.class),
-                any(ClaudiaData.class), any(String.class), any(ProductRelease.class), any(HashSet.class)))
-                .thenReturn(productInstance);
+        when(
+                productInstanceManager.install(any(TierInstance.class), any(ClaudiaData.class), any(String.class),
+                        any(ProductRelease.class), any(HashSet.class))).thenReturn(productInstance);
 
-        productInstanceAsyncManagerImpl
-                .install(tierInstanceShard, claudiaData, "env", productReleaseShard, null, task, callback);
+        productInstanceAsyncManagerImpl.install(tierInstanceShard, claudiaData, "env", productReleaseShard, null, task,
+                callback);
 
     }
-
 
     @Test
     public void testCreateProductInstanceManagerError() throws AlreadyExistsEntityException, InvalidEntityException,
@@ -314,12 +306,13 @@ public class AsynManagerImplTest {
         String callback = "";
         Task task = new Task();
 
-        when(productInstanceManager.install(any(TierInstance.class),
-                any(ClaudiaData.class), any(String.class), any(ProductRelease.class), any(HashSet.class))).
-                thenThrow(new InvalidProductInstanceRequestException("test"));
+        when(
+                productInstanceManager.install(any(TierInstance.class), any(ClaudiaData.class), any(String.class),
+                        any(ProductRelease.class), any(HashSet.class))).thenThrow(
+                new InvalidProductInstanceRequestException("test"));
 
-        productInstanceAsyncManagerImpl
-                .install(tierInstanceShard, claudiaData, "env", productReleaseShard, null, task, callback);
+        productInstanceAsyncManagerImpl.install(tierInstanceShard, claudiaData, "env", productReleaseShard, null, task,
+                callback);
 
     }
 
@@ -332,18 +325,18 @@ public class AsynManagerImplTest {
         String callback = "";
         Task task = new Task();
 
-        when(productInstanceManager.install(any(TierInstance.class),
-                any(ClaudiaData.class), any(String.class), any(ProductRelease.class), any(HashSet.class))).
-                thenThrow(new InvalidProductInstanceRequestException("test"));
+        when(
+                productInstanceManager.install(any(TierInstance.class), any(ClaudiaData.class), any(String.class),
+                        any(ProductRelease.class), any(HashSet.class))).thenThrow(
+                new InvalidProductInstanceRequestException("test"));
 
-        when(productInstanceManager.loadByCriteria(any(ProductInstanceSearchCriteria.class)))
-                .thenThrow(new EntityNotFoundException(ProductInstance.class, callback, task));
+        when(productInstanceManager.loadByCriteria(any(ProductInstanceSearchCriteria.class))).thenThrow(
+                new EntityNotFoundException(ProductInstance.class, callback, task));
 
-        productInstanceAsyncManagerImpl
-                .install(tierInstanceShard, claudiaData, "env", productReleaseShard, null, task, callback);
+        productInstanceAsyncManagerImpl.install(tierInstanceShard, claudiaData, "env", productReleaseShard, null, task,
+                callback);
 
     }
-
 
     @Test
     public void testDeleteProductInstanceManager() throws AlreadyExistsEntityException, InvalidEntityException,
@@ -368,11 +361,11 @@ public class AsynManagerImplTest {
         ClaudiaData claudiaData = new ClaudiaData("org", "vdc", "service");
         String callback = "";
         Task task = new Task();
-        when(environmentInstanceManager.load(any(String.class), any(String.class)))
-                .thenThrow(new EntityNotFoundException(EnvironmentInstance.class, callback, task));
+        when(environmentInstanceManager.load(any(String.class), any(String.class))).thenThrow(
+                new EntityNotFoundException(EnvironmentInstance.class, callback, task));
 
-        when(environmentInstanceManager.create(any(ClaudiaData.class), any(EnvironmentInstance.class)))
-                .thenReturn(environmentInstance);
+        when(environmentInstanceManager.create(any(ClaudiaData.class), any(EnvironmentInstance.class))).thenReturn(
+                environmentInstance);
 
         environmentInstanceAsyncManagerImpl.create(claudiaData, environmentInstance, task, callback);
 
@@ -387,32 +380,28 @@ public class AsynManagerImplTest {
         ClaudiaData claudiaData = new ClaudiaData("org", "vdc", "service");
         String callback = "";
         Task task = new Task();
-        when(environmentInstanceManager.load(any(String.class), any(String.class)))
-                .thenThrow(new EntityNotFoundException(EnvironmentInstance.class, callback, task));
+        when(environmentInstanceManager.load(any(String.class), any(String.class))).thenThrow(
+                new EntityNotFoundException(EnvironmentInstance.class, callback, task));
 
-        when(environmentInstanceManager.create(any(ClaudiaData.class), any(EnvironmentInstance.class)))
-                .thenThrow(new InfrastructureException("test"));
+        when(environmentInstanceManager.create(any(ClaudiaData.class), any(EnvironmentInstance.class))).thenThrow(
+                new InfrastructureException("test"));
 
         environmentInstanceAsyncManagerImpl.create(claudiaData, environmentInstance, task, callback);
 
     }
 
     @Test
-    public void testDeleteEnvInstanceManager() throws AlreadyExistsEntityException, InvalidEntityException,
-            InfrastructureException, EntityNotFoundException {
+    public void testDeleteEnvInstanceManager() throws Exception {
 
         ClaudiaData claudiaData = new ClaudiaData("org", "vdc", "service");
         String callback = "";
         Task task = new Task();
 
-        Mockito
-                .doNothing()
-                .when(environmentInstanceManager)
+        Mockito.doNothing().when(environmentInstanceManager)
                 .destroy(any(ClaudiaData.class), any(EnvironmentInstance.class));
 
         environmentInstanceAsyncManagerImpl.destroy(claudiaData, environmentInstance, task, callback);
 
     }
-
 
 }

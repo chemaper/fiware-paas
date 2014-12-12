@@ -41,7 +41,6 @@ import com.telefonica.euro_iaas.paasmanager.manager.TierManager;
 import com.telefonica.euro_iaas.paasmanager.model.ClaudiaData;
 import com.telefonica.euro_iaas.paasmanager.model.Environment;
 import com.telefonica.euro_iaas.paasmanager.model.Tier;
-import com.telefonica.euro_iaas.paasmanager.model.searchcriteria.EnvironmentSearchCriteria;
 
 public class EnvironmentManagerImpl implements EnvironmentManager {
 
@@ -122,15 +121,16 @@ public class EnvironmentManagerImpl implements EnvironmentManager {
         if (vdc == null || vdc.isEmpty()) {
             return environmentDao.load(name);
         } else {
-        	try {
-        		
-        		Environment env = environmentDao.load(name, vdc);
-        		log.info("in load before rturn");
+            try {
+
+                Environment env = environmentDao.findByEnvironmentNameVdc(name, vdc);
+                log.info("in load before rturn");
                 return env;
-        	} catch (Exception e) {
-        		log.info("error in load " + e.getMessage());
-        		throw new EntityNotFoundException(Environment.class, "name", name);
-        	}
+            } catch (Exception e) {
+                log.info("error in load " + e.getMessage());
+                throw new EntityNotFoundException(Environment.class, "name", name);
+            }
+
         }
     }
 
@@ -138,8 +138,19 @@ public class EnvironmentManagerImpl implements EnvironmentManager {
         return environmentDao.findAll();
     }
 
-    public List<Environment> findByCriteria(EnvironmentSearchCriteria criteria) {
-        return environmentDao.findByCriteria(criteria);
+    @Override
+    public List<Environment> findByOrgAndVdc(String org, String vdc) {
+        return environmentDao.findByOrgAndVdc(org, vdc);
+    }
+
+    @Override
+    public List<Environment> findByOrgAndVdcAndName(String org, String vdc, String name) {
+        return environmentDao.findByOrgAndVdcAndName(org, vdc, name);
+    }
+
+    @Override
+    public List<Environment> findByOrg(String org) {
+        return environmentDao.findByOrg(org);
     }
 
     /**
@@ -155,13 +166,6 @@ public class EnvironmentManagerImpl implements EnvironmentManager {
     }
 
     public Environment update(Environment environment) throws EntityNotFoundException, InvalidEntityException {
-        return environmentDao.update(environment);
-    }
-
-    public Environment updateTier(Environment environment, Tier tierold, Tier tiernew) throws EntityNotFoundException,
-            InvalidEntityException {
-
-        environment.updateTier(tierold, tiernew);
         return environmentDao.update(environment);
     }
 

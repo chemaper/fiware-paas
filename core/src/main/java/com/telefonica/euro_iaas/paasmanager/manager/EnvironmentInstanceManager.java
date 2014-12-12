@@ -46,9 +46,6 @@ public interface EnvironmentInstanceManager {
     /**
      * Create an environentInstance
      * 
-     * @param vdc
-     * @param environment
-     * @param envInstanceName
      * @return
      * @throws EntityNotFoundException
      * @throws InvalidEntityException
@@ -59,12 +56,7 @@ public interface EnvironmentInstanceManager {
      * @throws ProductInstallatorException
      * @throws InvalidEnvironmentRequestException
      */
-    /*
-     * EnvironmentInstance create(String org, String vdc, PaasManagerUser user, String envInstanceName, Environment
-     * environment) throws EntityNotFoundException, InvalidEntityException, AlreadyExistsEntityException,
-     * NotUniqueResultException, InfrastructureException, IPNotRetrievedException, ProductInstallatorException,
-     * InvalidEnvironmentRequestException, InvalidProductInstanceRequestException, InvalidOVFException;
-     */
+
     EnvironmentInstance create(ClaudiaData claudiaData, EnvironmentInstance environmentInstance)
             throws EntityNotFoundException, InvalidEntityException, AlreadyExistsEntityException,
             NotUniqueResultException, InfrastructureException, IPNotRetrievedException, ProductInstallatorException,
@@ -107,17 +99,12 @@ public interface EnvironmentInstanceManager {
      * Destroy the Environment (Infrastructure + environment in Database)
      * 
      * @param envInstance
-     * @param org
-     * @param vdc
+     * @param claudiaData
+     * @throws EntityNotF
+     *             oundException
+     * @throws InfrastructureException
+     * @throws Exception
      */
-    void destroy(ClaudiaData claudiaData, EnvironmentInstance envInstance) throws InvalidEntityException;
-
-    /**
-     * @param vdc
-     * @param name
-     * @return
-     * @throws EntityNotFoundException
-     */
-    EnvironmentInstance loadForDelete(String vdc, String name) throws EntityNotFoundException;
+    void destroy(ClaudiaData claudiaData, EnvironmentInstance envInstance) throws Exception;
 
 }

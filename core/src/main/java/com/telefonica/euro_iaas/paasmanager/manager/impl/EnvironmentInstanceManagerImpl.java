@@ -336,16 +336,6 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
         return instance;
     }
 
-    public EnvironmentInstance loadForDelete(String vdc, String name) throws EntityNotFoundException {
-        EnvironmentInstance instance = null;
-        try {
-            instance = environmentInstanceDao.loadForDelete(name, vdc);
-        } catch (EntityNotFoundException e) {
-            instance = environmentInstanceDao.load(name, vdc);
-            instance.setTierInstances(null);
-        }
-        return instance;
-    }
 
     public EnvironmentInstance update(EnvironmentInstance envInst) throws InvalidEntityException {
         try {

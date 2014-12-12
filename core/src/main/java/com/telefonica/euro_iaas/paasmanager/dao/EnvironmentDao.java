@@ -29,7 +29,6 @@ import java.util.List;
 import com.telefonica.euro_iaas.commons.dao.BaseDAO;
 import com.telefonica.euro_iaas.commons.dao.EntityNotFoundException;
 import com.telefonica.euro_iaas.paasmanager.model.Environment;
-import com.telefonica.euro_iaas.paasmanager.model.searchcriteria.EnvironmentSearchCriteria;
 
 /**
  * Defines the methods needed to persist Environment objects.
@@ -37,25 +36,41 @@ import com.telefonica.euro_iaas.paasmanager.model.searchcriteria.EnvironmentSear
  * @author Jesus M. Movilla
  */
 public interface EnvironmentDao extends BaseDAO<Environment, String> {
-    /**
-     * Find the environment that matches with the given criteria.
-     * 
-     * @param criteria
-     *            the search criteria
-     * @return the list of elements that match with the criteria.
-     */
-    List<Environment> findByCriteria(EnvironmentSearchCriteria criteria);
 
     /**
-     * Loads an environment from vdc and its name
+     * It loads for the environment in the database with the name and vdc.
      * 
-     * @param name
+     * @param envName
      * @param vdc
      * @return
      * @throws EntityNotFoundException
      */
-    Environment load(String name, String vdc) throws EntityNotFoundException;
+    Environment findByEnvironmentNameVdc(String envName, String vdc) throws EntityNotFoundException;
 
-    // Environment filterEqualTiers(Environment environment);
+    /**
+     * Find all environments by tenant and organization.
+     * 
+     * @param org
+     * @param vdc
+     * @return
+     */
+    List<Environment> findByOrgAndVdc(String org, String vdc);
 
+    /**
+     * Find all environments by tenant, organization and environment name.
+     * 
+     * @param org
+     * @param vdc
+     * @param name
+     * @return
+     */
+    List<Environment> findByOrgAndVdcAndName(String org, String vdc, String name);
+
+    /**
+     * Find all environments by organization
+     * 
+     * @param org
+     * @return
+     */
+    List<Environment> findByOrg(String org);
 }

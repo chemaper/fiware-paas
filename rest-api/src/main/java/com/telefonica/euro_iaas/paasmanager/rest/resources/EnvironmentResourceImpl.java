@@ -30,7 +30,6 @@ import java.util.List;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,6 @@ import com.telefonica.euro_iaas.paasmanager.model.ClaudiaData;
 import com.telefonica.euro_iaas.paasmanager.model.Environment;
 import com.telefonica.euro_iaas.paasmanager.model.dto.EnvironmentDto;
 import com.telefonica.euro_iaas.paasmanager.model.dto.PaasManagerUser;
-import com.telefonica.euro_iaas.paasmanager.model.searchcriteria.EnvironmentSearchCriteria;
 import com.telefonica.euro_iaas.paasmanager.rest.exception.APIException;
 import com.telefonica.euro_iaas.paasmanager.rest.validation.EnvironmentResourceValidator;
 import com.telefonica.euro_iaas.paasmanager.util.SystemPropertiesProvider;
@@ -77,10 +75,15 @@ public class EnvironmentResourceImpl implements EnvironmentResource {
 
     /**
      * Delete an specific environment instance.
-     * @param org   The organization which contains the environment instance.
-     * @param vdc   The vdc which contains the environment instance.
-     * @param envName The name of the environment instance.
-     * @throws APIException Any exception that throws during the operation.
+     * 
+     * @param org
+     *            The organization which contains the environment instance.
+     * @param vdc
+     *            The vdc which contains the environment instance.
+     * @param envName
+     *            The name of the environment instance.
+     * @throws APIException
+     *             Any exception that throws during the operation.
      */
     public void delete(String org, String vdc, String envName) throws APIException {
         ClaudiaData claudiaData = new ClaudiaData(org, vdc, envName);
@@ -89,8 +92,8 @@ public class EnvironmentResourceImpl implements EnvironmentResource {
 
             addCredentialsToClaudiaData(claudiaData);
 
-            Environment env = environmentManager.load(envName, vdc);
-            environmentManager.destroy(claudiaData, env);
+            List<Environment> list = environmentManager.findByOrgAndVdcAndName(org, vdc, envName);
+            environmentManager.destroy(claudiaData, list.get(0));
         } catch (Exception e) {
             throw new APIException(new InvalidEntityException(e.getMessage()));
         }
@@ -108,8 +111,11 @@ public class EnvironmentResourceImpl implements EnvironmentResource {
 
     /**
      * Find all environment resource.
-     * @param org   The organization which contains the environment instance.
-     * @param vdc   The vdc which contains the environment instance.
+     * 
+     * @param org
+     *            The organization which contains the environment instance.
+     * @param vdc
+     *            The vdc which contains the environment instance.
      * @param page
      *            for pagination is 0 based number(<i>nullable</i>)
      * @param pageSize
@@ -118,43 +124,29 @@ public class EnvironmentResourceImpl implements EnvironmentResource {
      *            the file to order the search (id by default <i>nullable</i>)
      * @param orderType
      *            defines if the order is ascending or descending (asc by default <i>nullable</i>)
-     * @return
-     *            The list of all environment.
+     * @return The list of all environment.
      */
     public List<EnvironmentDto> findAll(String org, String vdc, Integer page, Integer pageSize, String orderBy,
             String orderType) {
-        EnvironmentSearchCriteria criteria = new EnvironmentSearchCriteria();
 
-        criteria.setVdc(vdc);
-        criteria.setOrg(org);
-
-        if (page != null && pageSize != null) {
-            criteria.setPage(page);
-            criteria.setPageSize(pageSize);
-        }
-        if (!StringUtils.isEmpty(orderBy)) {
-            criteria.setOrderBy(orderBy);
-        }
-        if (!StringUtils.isEmpty(orderType)) {
-            criteria.setOrderBy(orderType);
-        }
-
-        List<Environment> env = environmentManager.findByCriteria(criteria);
+        List<Environment> environments = environmentManager.findByOrgAndVdc(org, vdc);
 
         // Solve the tier-environment duplicity appeared at database due to hibernate problems
         // List<Environment> envs = filterEqualTiers(env);
 
         List<EnvironmentDto> envsDto = new ArrayList<EnvironmentDto>();
-        for (int i = 0; i < env.size(); i++) {
-            envsDto.add(env.get(i).toDto());
 
+        for (Environment environment : environments) {
+            envsDto.add(environment.toDto());
         }
+
         return envsDto;
     }
 
     /**
      * Get the credentials of a user.
-     * @return  The credentials.
+     * 
+     * @return The credentials.
      */
     public PaasManagerUser getCredentials() {
         if (systemPropertiesProvider.getProperty(SystemPropertiesProvider.CLOUD_SYSTEM).equals("FIWARE")) {
@@ -182,9 +174,13 @@ public class EnvironmentResourceImpl implements EnvironmentResource {
 
     /**
      * Insert a new environment resource.
-     * @param org   The organization which contains the environment instance.
-     * @param vdc   The vdc which contains the environment instance.
-     * @param environmentDto    The new environment resource.
+     * 
+     * @param org
+     *            The organization which contains the environment instance.
+     * @param vdc
+     *            The vdc which contains the environment instance.
+     * @param environmentDto
+     *            The new environment resource.
      * @throws APIException
      */
     public void insert(String org, String vdc, EnvironmentDto environmentDto) throws APIException {
@@ -207,20 +203,20 @@ public class EnvironmentResourceImpl implements EnvironmentResource {
 
     /**
      * Find a specific environment resource.
-     * @param org   The organization which contains the environment instance.
-     * @param vdc   The vdc which contains the environment instance.
-     * @param name  The name of the environment resource.
-     * @return  The details information of the environment resource.
-     * @throws APIException Any exception happened during the process.
+     * 
+     * @param org
+     *            The organization which contains the environment instance.
+     * @param vdc
+     *            The vdc which contains the environment instance.
+     * @param name
+     *            The name of the environment resource.
+     * @return The details information of the environment resource.
+     * @throws APIException
+     *             Any exception happened during the process.
      */
     public EnvironmentDto load(String org, String vdc, String name) throws APIException {
 
-        EnvironmentSearchCriteria criteria = new EnvironmentSearchCriteria();
-        criteria.setVdc(vdc);
-        criteria.setOrg(org);
-        criteria.setEnvironmentName(name);
-
-        List<Environment> env = environmentManager.findByCriteria(criteria);
+        List<Environment> env = environmentManager.findByOrgAndVdcAndName(org, vdc, name);
 
         // Solve the tier-environment duplicity appeared at database due to hibernate problems
         // List<Environment> envs = filterEqualTiers(env);

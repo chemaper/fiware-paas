@@ -32,13 +32,11 @@ import com.telefonica.euro_iaas.paasmanager.exception.InfrastructureException;
 import com.telefonica.euro_iaas.paasmanager.exception.InvalidEnvironmentRequestException;
 import com.telefonica.euro_iaas.paasmanager.model.ClaudiaData;
 import com.telefonica.euro_iaas.paasmanager.model.Environment;
-import com.telefonica.euro_iaas.paasmanager.model.Tier;
-import com.telefonica.euro_iaas.paasmanager.model.searchcriteria.EnvironmentSearchCriteria;
 
 public interface EnvironmentManager {
 
     /**
-     * Create an environent
+     * Create an environent.
      * 
      * @param name
      * @param tiers
@@ -48,25 +46,13 @@ public interface EnvironmentManager {
     Environment create(ClaudiaData claudiaData, Environment environment) throws InvalidEnvironmentRequestException;
 
     /**
-     * Updates the tier
-     * 
-     * @param environment
-     * @param tierold
-     * @param tiernew
-     * @return
-     * @throws EntityNotFoundException
-     * @throws InvalidEntityException
-     */
-    Environment updateTier(Environment environment, Tier tierold, Tier tiernew) throws EntityNotFoundException,
-            InvalidEntityException;
-
-    /**
      * Destroy a previously creted environment.
      * 
      * @param environment
      *            the candidate to environment
      */
-    void destroy(ClaudiaData data, Environment environment) throws InvalidEntityException, InfrastructureException, EntityNotFoundException;
+    void destroy(ClaudiaData data, Environment environment) throws InvalidEntityException, InfrastructureException,
+            EntityNotFoundException;
 
     /**
      * Find the Environment using the given name.
@@ -80,7 +66,6 @@ public interface EnvironmentManager {
      *             if the product instance does not exists
      */
     Environment load(String name, String vdc) throws EntityNotFoundException;
- 
 
     /**
      * Updates the environment
@@ -100,12 +85,25 @@ public interface EnvironmentManager {
     List<Environment> findAll();
 
     /**
-     * Find the environments that match with the given criteria.
+     * Find all environments by tenant and organization.
      * 
-     * @param criteria
-     *            the search criteria
-     * @return the list of elements that match with the criteria.
+     * @param org
+     * @param vdc
+     * @return
      */
-    List<Environment> findByCriteria(EnvironmentSearchCriteria criteria);
+    List<Environment> findByOrgAndVdc(String org, String vdc);
 
+    /**
+     * @param org
+     * @param vdc
+     * @param name
+     * @return
+     */
+    List<Environment> findByOrgAndVdcAndName(String org, String vdc, String name);
+
+    /**
+     * @param org
+     * @return
+     */
+    List<Environment> findByOrg(String org);
 }
